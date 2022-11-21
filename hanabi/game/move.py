@@ -9,9 +9,11 @@ class MoveType(Enum):
     HINT = 'hint'
     PLAY = 'play'
 
+CardIndex: TypeAlias = int
 
+@dataclass
 class Move:
     move_type: MoveType
-    move_detail: Union[CardColor, CardNumber]
+    move_detail: Union[CardColor, CardNumber, CardIndex]
     target_player: int
 

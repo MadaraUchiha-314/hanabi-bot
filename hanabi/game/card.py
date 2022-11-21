@@ -16,8 +16,7 @@ class CardColor(Enum):
     YELLOW = 'yellow'
     WHITE = 'white'
 
-
+@dataclass
 class Card:
     number: CardNumber
     color: CardColor
-    is_critical: bool
