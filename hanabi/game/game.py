@@ -1,5 +1,6 @@
+import copy
 from dataclasses import dataclass
-from typing import List
+from typing import List, Tuple
 
 from hanabi.game.state import State
 from hanabi.game.move import Move, MoveType
@@ -91,10 +92,13 @@ class Game:
     def apply_move(self, move: Move) -> State:
         pass
     
-    def get_current_state(self) -> State:
-        pass
+    def get_state_for_current_player(self) -> State:
+        state_for_player = copy.deepcopy(self.state)
+        state_for_player.player_cards[self.state.current_player] = []
+        state_for_player.deck = []
+        return state_for_player
     
-    def get_next_states(self) -> List[State]:
+    def get_next_moves_and_states(self) -> List[Tuple[Move, State]]:
         pass
     
     def make_move(self, move: Move):

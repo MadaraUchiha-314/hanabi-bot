@@ -3,7 +3,7 @@ from typing import List
 
 from tabulate import tabulate
 
-from hanabi.game.card import Card, CardColor
+from hanabi.game.card import Card
 
 
 @dataclass

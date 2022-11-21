@@ -39,11 +39,11 @@ def run_game():
         current_player = game.state.current_player
         current_agent: Agent = players[current_player]
 
-        state_for_player = copy.deepcopy(game.state)
-        state_for_player.player_cards[current_player] = []
-        candidate_actions = game.get_next_moves()
+        played_action = current_agent.action(
+            state=game.get_state_for_current_player(),
+            candidate_moves_and_states=game.get_next_moves_and_states(),
+        )
 
-        played_action = current_agent.action(state=state_for_player, candidate_moves=candidate_actions)
         played_moves_log.append(PlayedMove(player_num=current_player, move=played_action))
         game.make_move(played_action)
 

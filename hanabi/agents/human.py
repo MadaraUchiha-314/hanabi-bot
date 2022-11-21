@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Tuple
 
 from hanabi.agents.agent import Agent
 from hanabi.game.move import Move, MoveType
@@ -37,10 +37,10 @@ class Human(Agent):
 
         return None
 
-    def action(self, state: State, candidate_moves: List[Move]) -> Move:
-        result = self.get_move_from_user(candidate_moves)
+    def action(self, state: State, candidate_moves_and_states: List[Tuple[Move, State]]) -> Move:
+        result = self.get_move_from_user([move for move, _ in candidate_moves_and_states])
         while result is None:
             print(f"Invalid input, please retry:")
-            result = self.get_move_from_user(candidate_moves)
+            result = self.get_move_from_user([move for move, _ in candidate_moves_and_states])
         return result
 
