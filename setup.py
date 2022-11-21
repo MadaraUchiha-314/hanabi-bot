@@ -24,7 +24,7 @@ if __name__ == "__main__":
         packages=["hanabi"],
         entry_points={
             "console_scripts": [
-                "hanabi = hanabi.run.run_game"
+                "hanabi = hanabi.run:run_game"
             ]
         },
         include_package_data=True,
