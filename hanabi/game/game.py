@@ -36,7 +36,7 @@ class Game:
 
         self.state = State(
             deck=initial_deck,
-            played_cards=[0] * len(self.game_config.colors),
+            played_cards={color: 0 for color in self.game_config.colors},
             discarded_cards=[],
             player_cards=player_cards,
             current_player=0,
@@ -104,11 +104,11 @@ class Game:
                     move.move_detail
                 )
             )
-            self.state.player_cards[self.state.current_player].append(self.state.deck.pop())
+            self.state.player_cards[self.state.current_player].insert(0, self.state.deck.pop())
         elif move.move_type == MoveType.PLAY:
             card_played = self.state.player_cards[self.state.current_player].pop(move.move_detail)
-            if self.state.played_cards[move.move_detail] == int(card_played.number.value) + 1:
-                self.state.played_cards[move.move_detail] += 1
+            if self.state.played_cards[card_played.color.value] == int(card_played.number.value) + 1:
+                self.state.played_cards[card_played.color.value] += 1
             else:
                 self.state.discarded_cards.append(card_played)
                 self.state.penalty_tokens += 1

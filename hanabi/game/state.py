@@ -21,8 +21,8 @@ class State:
     def __str__(self):
         result = ''
         result += "Played cards: \n"
-        colors = [color.value for color in CardColor]
-        result += tabulate([self.played_cards], headers=colors)
+        colors = [color.value for color in self.played_cards.keys()]
+        result += tabulate([self.played_cards.values()], headers=colors)
 
         result += "\n\nDiscarded cards: \n"
         for card in self.discarded_cards:
