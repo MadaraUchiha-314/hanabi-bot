@@ -1,8 +1,13 @@
+import copy
 import random
 from typing import List
 
+from hanabi.agents.agent import Agent
+from hanabi.agents.discarding_agent import DiscardingAgent
+from hanabi.agents.human import Human
 from hanabi.game.card import CardColor, CardNumber, Card
 from hanabi.game.game import Game
+from hanabi.game.move import PlayedMove
 
 random.seed(42)
 
@@ -32,8 +37,28 @@ def run_game():
         Card(CardColor.YELLOW, CardNumber.THREE),
     ]
 
-    print(game.state)
-    print('\n'.join(str(x) for x in game.get_next_moves()))
+    players = [Human(0), DiscardingAgent(1), DiscardingAgent(2)]
+
+    played_moves_log = []
+    for i in range(10):
+        print(game.state)
+
+        current_player = game.state.player_turn
+        current_agent: Agent = players[current_player]
+
+        state_for_player = copy.deepcopy(game.state)
+        state_for_player.player_cards[current_player] = []
+        candidate_actions = game.get_next_moves()
+
+        played_action = current_agent.action(state=state_for_player, candidate_moves=candidate_actions)
+        played_moves_log.append(PlayedMove(player_num=current_player, move=played_action))
+        game.make_move(played_action)
+
+        print("-" * 50)
+        print("\nGame log")
+        for played_move in played_moves_log:
+            print(f"Player {played_move.player_num}: {played_move.move}")
+
 
 
 if __name__ == '__main__':

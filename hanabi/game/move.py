@@ -19,8 +19,14 @@ class Move:
 
     def __str__(self):
         if self.move_type == MoveType.HINT:
-            return f'{self.move_type.value} {self.move_detail} to player {self.target_player}'
+            return f'hinted player {self.target_player} -- {self.move_detail.value}'
         elif self.move_type == MoveType.DISCARD:
-            return f'{self.move_type.value} {self.move_detail}'
+            return f'discarded {self.move_detail}'
         elif self.move_type == MoveType.PLAY:
-            return f'{self.move_type.value} {self.move_detail}'
+            return f'played {self.move_detail}'
+
+
+@dataclass
+class PlayedMove:
+    player_num: int
+    move: Move
