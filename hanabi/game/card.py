@@ -20,3 +20,4 @@ class CardColor(Enum):
 class Card:
     number: CardNumber
     color: CardColor
+    is_critical: bool

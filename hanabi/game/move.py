@@ -13,4 +13,5 @@ class MoveType(Enum):
 class Move:
     move_type: MoveType
     move_detail: Union[CardColor, CardNumber]
+    target_player: int
 
