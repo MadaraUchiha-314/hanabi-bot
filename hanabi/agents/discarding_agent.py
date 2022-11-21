@@ -10,6 +10,6 @@ class DiscardingAgent(Agent):
         super().__init__(player_index)
 
     def action(self, state: State, candidate_moves_and_states: List[Tuple[Move, State]]) -> Move:
-        for move in candidate_moves_and_states:
+        for move, _ in candidate_moves_and_states:
             if move.move_type == MoveType.DISCARD:
                 return move

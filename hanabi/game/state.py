@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import List
 
-from tabulate import tabulate
+from tabulate import tabulate, SEPARATING_LINE
 
 from hanabi.game.card import Card
 
@@ -34,15 +34,25 @@ class State:
         result += f"\nHint tokens: {self.hint_tokens}"
         result += f"\nPenalty tokens: {self.penalty_tokens}"
 
-        result += "\n\nPlayer cards: \n"
+        result += "\n\nPlayer cards & hints: \n"
+        card_hint_table = []
         # TODO: Replace with num_players
         for player in range(3):
-            result += f"Player {player}: "
+            # Cards
+            cards_row = [f"Player {player} cards"]
             if player == self.current_player:
-                result += "Redacted\n"
+                cards_row += ["Redacted"] * len(self.player_cards[player])
             else:
-                for card in self.player_cards[player]:
-                    result += f'{str(card)} '
-                result += '\n'
+                cards_row += [str(card) for card in self.player_cards[player]]
+            card_hint_table.append(cards_row)
+
+            hints_row = [f"Player {player} hints"]
+            hints_row += [card.hints_str() for card in self.player_cards[player]]
+            card_hint_table.append(hints_row)
+
+            if player != 2:
+                card_hint_table.append(SEPARATING_LINE)
+
+        result += tabulate(card_hint_table)
 
         return result

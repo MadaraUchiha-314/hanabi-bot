@@ -45,7 +45,7 @@ class Game:
             penalty_tokens=self.game_config.max_penalty_tokes,
         )
 
-    def get_hint_moves(self) -> List[Move]:
+    def _get_hint_moves(self) -> List[Move]:
         if self.game_config.hint_tokens < 1:
             return []
         moves = []
@@ -66,7 +66,7 @@ class Game:
                 ))
         return moves
 
-    def get_dicard_moves(self) -> List[Move]:
+    def _get_dicard_moves(self) -> List[Move]:
         moves = []
         for i in range(len(self.state.player_cards[self.state.current_player])):
             moves.append(Move(
@@ -76,7 +76,7 @@ class Game:
             ))
         return moves
     
-    def get_play_moves(self) -> List[Move]:
+    def _get_play_moves(self) -> List[Move]:
         moves = []
         for i in range(len(self.state.player_cards[self.state.current_player])):
             moves.append(Move(
@@ -87,7 +87,7 @@ class Game:
         return moves
 
     def get_next_moves(self) -> List[Move]:
-        return self.get_hint_moves() + self.get_dicard_moves() + self.get_play_moves()
+        return self._get_hint_moves() + self._get_dicard_moves() + self._get_play_moves()
     
     def apply_move(self, move: Move) -> State:
         pass
@@ -99,8 +99,28 @@ class Game:
         return state_for_player
     
     def get_next_moves_and_states(self) -> List[Tuple[Move, State]]:
-        pass
-    
+        return [(move, None) for move in self.get_next_moves()]
+
+    def _update_hints(self, move: Move, target_player: int):
+        if isinstance(move.move_detail, CardNumber):
+            hinted_number = move.move_detail
+            for card in self.state.player_cards[target_player]:
+                if card.number == hinted_number:  # If match, cross out every other number
+                    for number in CardNumber:
+                        card.hints[number.value] = False
+                    card.hints[card.number.value] = True
+                else:  # else cross out the number hinted
+                    card.hints[hinted_number.value] = False
+        if isinstance(move.move_detail, CardColor):
+            hinted_color = move.move_detail
+            for card in self.state.player_cards[target_player]:
+                if card.color == hinted_color:  # If match, cross out every other number
+                    for color in CardNumber:
+                        card.hints[color.value] = False
+                    card.hints[card.color.value] = True
+                else:  # else cross out the number hinted
+                    card.hints[hinted_color.value] = False
+
     def make_move(self, move: Move):
         if move.move_type == MoveType.DISCARD:
             self.state.discarded_cards.append(
@@ -119,4 +139,6 @@ class Game:
             self.state.player_cards[self.state.current_player].append(self.state.deck.pop())
         else:
             self.state.hint_tokens -= 1
+            self._update_hints(move, target_player=move.target_player)
+
         self.state.current_player = (self.state.current_player + 1) % self.game_config.num_players
