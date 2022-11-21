@@ -39,7 +39,7 @@ class Game:
             played_cards=[0] * len(self.game_config.colors),
             discarded_cards=[],
             player_cards=player_cards,
-            player_turn=0,
+            current_player=0,
             hint_tokens=self.game_config.hint_tokens,
             penalty_tokens=self.game_config.max_penalty_tokes,
         )
@@ -49,7 +49,7 @@ class Game:
             return []
         moves = []
         for target_player in range(self.game_config.num_players):
-            if target_player == self.state.player_turn:
+            if target_player == self.state.current_player:
                 continue
             for color in self.game_config.colors:
                 moves.append(Move(
@@ -67,28 +67,28 @@ class Game:
 
     def get_dicard_moves(self) -> List[Move]:
         moves = []
-        for i in range(len(self.state.player_cards[self.state.player_turn])):
+        for i in range(len(self.state.player_cards[self.state.current_player])):
             moves.append(Move(
                 move_type=MoveType.DISCARD,
                 move_detail=CardIndex(i),
-                target_player=self.state.player_turn,
+                target_player=self.state.current_player,
             ))
         return moves
     
     def get_play_moves(self) -> List[Move]:
         moves = []
-        for i in range(len(self.state.player_cards[self.state.player_turn])):
+        for i in range(len(self.state.player_cards[self.state.current_player])):
             moves.append(Move(
                 move_type=MoveType.PLAY,
                 move_detail=CardIndex(i),
-                target_player=self.state.player_turn,
+                target_player=self.state.current_player,
             ))
         return moves
 
     def get_next_moves(self) -> List[Move]:
         return self.get_hint_moves() + self.get_dicard_moves() + self.get_play_moves()
     
-    def apply_move(self) -> State:
+    def apply_move(self, move: Move) -> State:
         pass
     
     def get_current_state(self) -> State:
@@ -98,4 +98,21 @@ class Game:
         pass
     
     def make_move(self, move: Move):
-        pass
+        if move.move_type == MoveType.DISCARD:
+            self.discarded_cards.append(
+                self.state.player_cards[self.state.current_player].pop(
+                    move.move_detail
+                )
+            )
+            self.state.player_cards.append(self.deck.pop())
+        elif move.move_type == MoveType.PLAY:
+            card_played = self.state.player_cards[self.state.current_player].pop(move.move_detail)
+            if move.move_details == card_played + 1:
+                self.state.played_cards[move.move_details] += 1
+            else:
+                self.state.discarded_cards.append(card_played)
+                self.state.penalty_tokens += 1
+            self.state.player_cards.append(self.deck.pop())
+        else:
+            self.state.hint_tokens -= 1
+        self.state.current_player = (self.state.current_player + 1) % self.game_config.num_players
