@@ -33,6 +33,7 @@ def run_game():
     ]
 
     print(game.state)
+    print('\n'.join(str(x) for x in game.get_next_moves()))
 
 
 if __name__ == '__main__':

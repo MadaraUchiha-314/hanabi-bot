@@ -40,8 +40,8 @@ class Game:
             discarded_cards=[],
             player_cards=player_cards,
             player_turn=0,
-            hint_tokens=0,
-            penalty_tokens=0,
+            hint_tokens=self.game_config.hint_tokens,
+            penalty_tokens=self.game_config.max_penalty_tokes,
         )
 
     def get_hint_moves(self) -> List[Move]:
@@ -97,5 +97,5 @@ class Game:
     def get_next_states(self) -> List[State]:
         pass
     
-    def make_move(self, move):
+    def make_move(self, move: Move):
         pass

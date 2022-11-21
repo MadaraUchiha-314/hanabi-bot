@@ -17,3 +17,10 @@ class Move:
     move_detail: Union[CardColor, CardNumber, CardIndex]
     target_player: int
 
+    def __str__(self):
+        if self.move_type == MoveType.HINT:
+            return f'{self.move_type.value} {self.move_detail} to player {self.target_player}'
+        elif self.move_type == MoveType.DISCARD:
+            return f'{self.move_type.value} {self.move_detail}'
+        elif self.move_type == MoveType.PLAY:
+            return f'{self.move_type.value} {self.move_detail}'

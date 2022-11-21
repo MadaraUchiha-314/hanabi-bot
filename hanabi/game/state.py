@@ -30,7 +30,8 @@ class State:
         if len(self.discarded_cards) == 0:
             result += "<empty>"
 
-        result += f"\n\nHint tokens: {self.hint_tokens}"
+        result += f"\n\nDeck size: {len(self.deck)}"
+        result += f"\nHint tokens: {self.hint_tokens}"
         result += f"\nPenalty tokens: {self.penalty_tokens}"
 
         result += "\n\nPlayer cards: \n"
