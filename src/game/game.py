@@ -6,6 +6,7 @@ class GameConfig:
         self.hint_tokens = config["hint_tokens"]
         self.max_penalty_tokes = config["max_penalty_tokes"]
 
+
 class Game:
     def __init__(self, config, initial_deck):
         self.game_config = GameConfig(config)
@@ -17,11 +18,11 @@ class Game:
         self.max_penalty_tokes = self.game_config.max_penalty_tokes
         self.discarded_cards = []
     
-    def get_current_state():
+    def get_current_state(self):
         pass
     
-    def get_next_states():
+    def get_next_states(self):
         pass
     
-    def make_move(move):
+    def make_move(self, move):
         pass
