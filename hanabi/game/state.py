@@ -13,7 +13,7 @@ class State:
     discarded_cards: List[Card]
     player_cards: List[List[Card]]
 
-    player_turn: int
+    current_player: int
 
     hint_tokens: int
     penalty_tokens: int
@@ -38,7 +38,7 @@ class State:
         # TODO: Replace with num_players
         for player in range(3):
             result += f"Player {player}: "
-            if player == self.player_turn:
+            if player == self.current_player:
                 result += "Redacted\n"
             else:
                 for card in self.player_cards[player]:

@@ -99,7 +99,11 @@ class Game:
     
     def make_move(self, move: Move):
         if move.move_type == MoveType.DISCARD:
-            self.discarded_cards.append(self.state.player_cards[self.state.current_player].pop(move.move_detail))
+            self.discarded_cards.append(
+                self.state.player_cards[self.state.current_player].pop(
+                    move.move_detail
+                )
+            )
             self.state.player_cards.append(self.deck.pop())
         elif move.move_type == MoveType.PLAY:
             card_played = self.state.player_cards[self.state.current_player].pop(move.move_detail)
