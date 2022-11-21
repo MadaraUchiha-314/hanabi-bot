@@ -30,20 +30,13 @@ def run_game():
     random.shuffle(initial_deck)
 
     game = Game(game_config, initial_deck)
-
-    game.state.discarded_cards = [
-        Card(CardColor.WHITE, CardNumber.ONE),
-        Card(CardColor.WHITE, CardNumber.THREE),
-        Card(CardColor.YELLOW, CardNumber.THREE),
-    ]
-
     players = [Human(0), DiscardingAgent(1), DiscardingAgent(2)]
 
     played_moves_log = []
     for i in range(10):
         print(game.state)
 
-        current_player = game.state.player_turn
+        current_player = game.state.current_player
         current_agent: Agent = players[current_player]
 
         state_for_player = copy.deepcopy(game.state)
@@ -58,7 +51,6 @@ def run_game():
         print("\nGame log")
         for played_move in played_moves_log:
             print(f"Player {played_move.player_num}: {played_move.move}")
-
 
 
 if __name__ == '__main__':
