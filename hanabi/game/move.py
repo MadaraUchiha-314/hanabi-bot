@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Union
 
-from src.game.card import CardColor, CardNumber
+from hanabi.game.card import CardColor, CardNumber
 
 
 class MoveType(Enum):
