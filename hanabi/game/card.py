@@ -1,4 +1,8 @@
+from dataclasses import dataclass
 from enum import Enum
+
+# hax
+CardIndex = int
 
 
 class CardNumber(Enum):
@@ -8,15 +12,28 @@ class CardNumber(Enum):
     FOUR = 4
     FIVE = 5
 
+    @staticmethod
+    def multiplicity(number: "CardNumber") -> int:
+        if number == CardNumber.ONE:
+            return 3
+        elif number == CardNumber.FIVE:
+            return 1
+        else:
+            return 2
+
 
 class CardColor(Enum):
-    BLUE = 'blue'
-    GREEN = 'green'
-    RED = 'red'
-    YELLOW = 'yellow'
-    WHITE = 'white'
+    BLUE = 'Blue'
+    GREEN = 'Green'
+    RED = 'Red'
+    YELLOW = 'Yellow'
+    WHITE = 'White'
+
 
 @dataclass
 class Card:
-    number: CardNumber
     color: CardColor
+    number: CardNumber
+
+    def __str__(self):
+        return f'{self.color.value[0]}{self.number.value}'

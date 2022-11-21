@@ -1,6 +1,10 @@
+from dataclasses import dataclass
+from typing import List
+
 from hanabi.game.state import State
 from hanabi.game.move import Move, MoveType
-from hanabi.game.card import CardNumber, CardColor
+from hanabi.game.card import CardNumber, CardColor, CardIndex
+
 
 @dataclass
 class GameConfig:
@@ -10,6 +14,7 @@ class GameConfig:
     cards_per_players: int
     hint_tokens: int
     max_penalty_tokes: int
+
 
 class Game:
     state: State
@@ -31,7 +36,7 @@ class Game:
 
         self.state = State(
             deck=initial_deck,
-            played_cards=[0] * len(self.game_config.available_decks),
+            played_cards=[0] * len(self.game_config.colors),
             discarded_cards=[],
             player_cards=player_cards,
             player_turn=0,
@@ -40,19 +45,19 @@ class Game:
         )
 
     def get_hint_moves(self) -> List[Move]:
-        if self.hint_tokens < 1:
+        if self.game_config.hint_tokens < 1:
             return []
         moves = []
         for target_player in range(self.game_config.num_players):
             if target_player == self.state.player_turn:
                 continue
-            for color in len(self.game_config.colors):
+            for color in self.game_config.colors:
                 moves.append(Move(
                     move_type=MoveType.HINT,
                     target_player=target_player,
                     move_detail=color
                 ))
-            for deck in len(self.game_config.available_decks):
+            for deck in self.game_config.available_decks:
                moves.append(Move(
                     move_type=MoveType.HINT,
                     target_player=target_player,
@@ -62,19 +67,21 @@ class Game:
 
     def get_dicard_moves(self) -> List[Move]:
         moves = []
-        for i in range(self.state.player_cards[self.state.player_turn]):
+        for i in range(len(self.state.player_cards[self.state.player_turn])):
             moves.append(Move(
                 move_type=MoveType.DISCARD,
-                move_detail=CardIndex(i)
+                move_detail=CardIndex(i),
+                target_player=self.state.player_turn,
             ))
         return moves
     
     def get_play_moves(self) -> List[Move]:
         moves = []
-        for i in range(self.state.player_cards[self.state.player_turn]):
+        for i in range(len(self.state.player_cards[self.state.player_turn])):
             moves.append(Move(
                 move_type=MoveType.PLAY,
-                move_detail=CardIndex(i)
+                move_detail=CardIndex(i),
+                target_player=self.state.player_turn,
             ))
         return moves
 
@@ -85,7 +92,7 @@ class Game:
         pass
     
     def get_current_state(self) -> State:
-        moves = self.
+        pass
     
     def get_next_states(self) -> List[State]:
         pass
