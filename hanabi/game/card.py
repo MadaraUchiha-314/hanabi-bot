@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 
 # hax
-from typing import List, Dict
+from typing import Dict
 
 CardIndex = int
 
@@ -13,15 +13,6 @@ class CardNumber(Enum):
     THREE = '3'
     FOUR = '4'
     FIVE = '5'
-
-    @staticmethod
-    def multiplicity(number: "CardNumber") -> int:
-        if number == CardNumber.ONE:
-            return 3
-        elif number == CardNumber.FIVE:
-            return 1
-        else:
-            return 2
 
 
 class CardColor(Enum):

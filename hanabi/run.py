@@ -11,6 +11,15 @@ from hanabi.game.move import PlayedMove
 random.seed(42)
 
 
+def get_card_multiplicity(number: "CardNumber") -> int:
+    if number == CardNumber.ONE:
+        return 3
+    elif number == CardNumber.FIVE:
+        return 1
+    else:
+        return 2
+
+
 def run_game():
     game_config = {
         "available_decks": [num for num in CardNumber],
@@ -24,7 +33,7 @@ def run_game():
     initial_deck: List[Card] = []
     for color in CardColor:
         for number in CardNumber:
-            for multiplicity in range(CardNumber.multiplicity(number)):
+            for multiplicity in range(get_card_multiplicity(number)):
                 initial_deck.append(Card(color=color, number=number))
     random.shuffle(initial_deck)
 
