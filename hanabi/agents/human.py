@@ -1,4 +1,4 @@
-from typing import List, Optional, Tuple
+from typing import List, Optional
 
 from hanabi.agents.agent import Agent
 from hanabi.game.move import Move, MoveType, HintCardColor, HintCardNumber
@@ -52,4 +52,3 @@ class Human(Agent):
             print(f"Invalid input, please retry:")
             result = self.get_move_from_user(candidate_moves)
         return result
-

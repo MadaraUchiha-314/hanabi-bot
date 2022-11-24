@@ -109,40 +109,44 @@ class Game:
         return state
 
     @staticmethod
-    def apply_discard_move(game_config: GameConfig, state: State, move: Move) -> State:
-        state.discarded_cards.append(
-            state.player_cards[state.current_player].pop(
+    def simulate_discard_move(game_config: GameConfig, state: State, move: Move) -> State:
+        new_state = copy.deepcopy(state)
+        new_state.discarded_cards.append(
+            new_state.player_cards[new_state.current_player].pop(
                 move.move_detail.card_index
             )
         )
-        state.player_cards[state.current_player].insert(0, state.deck.pop())
-        return state
+        new_state.player_cards[new_state.current_player].insert(0, new_state.deck.pop())
+        return new_state
     
     @staticmethod
-    def apply_play_move(game_config: GameConfig, state: State, move: Move) -> State:
-        card_played = state.player_cards[state.current_player].pop(move.move_detail.card_index)
-        if state.played_cards[card_played.color] == int(card_played.number.value) + 1:
-            state.played_cards[card_played.color] += 1
+    def simulate_play_move(game_config: GameConfig, state: State, move: Move) -> State:
+        new_state = copy.deepcopy(state)
+
+        card_played = new_state.player_cards[new_state.current_player].pop(move.move_detail.card_index)
+        if new_state.played_cards[card_played.color] == int(card_played.number.value) + 1:
+            new_state.played_cards[card_played.color] += 1
         else:
-            state.discarded_cards.append(card_played)
-            state.penalty_tokens += 1
-        state.player_cards[state.current_player].append(state.deck.pop())
-        return state
+            new_state.discarded_cards.append(card_played)
+            new_state.penalty_tokens += 1
+        new_state.player_cards[new_state.current_player].append(new_state.deck.pop())
+        return new_state
     
     @staticmethod
-    def apply_hint_move(game_config: GameConfig, state: State, move: Move) -> State:
-        state.hint_tokens -= 1
-        return state
+    def simulate_hint_move(game_config: GameConfig, state: State, move: Move) -> State:
+        new_state = copy.deepcopy(state)
+        new_state.hint_tokens -= 1
+        return new_state
     
     @staticmethod
-    def apply_move(game_config: GameConfig, state: State, move: Move) -> State:
+    def simulate_move(game_config: GameConfig, state: State, move: Move) -> State:
         state = copy.deepcopy(state)
         if move.move_type == MoveType.DISCARD:
-            return Game.apply_discard_move(game_config, state, move)
+            return Game.simulate_discard_move(game_config, state, move)
         elif move.move_type == MoveType.PLAY:
-            return Game.apply_play_move(game_config, state, move)
+            return Game.simulate_play_move(game_config, state, move)
         else:
-            return Game.apply_hint_move(game_config, state, move)
+            return Game.simulate_hint_move(game_config, state, move)
          
     def get_state_for_current_player(self) -> State:
         state_for_player = copy.deepcopy(self.state)
@@ -175,9 +179,9 @@ class Game:
 
     def make_move(self, move: Move):
         if move.move_type == MoveType.DISCARD:
-            self.state = Game.apply_discard_move(self.game_config, copy.deepcopy(self.state), move)
+            self.state = Game.simulate_discard_move(self.game_config, self.state, move)
         elif move.move_type == MoveType.PLAY:
-            self.state = Game.apply_play_move(self.game_config, copy.deepcopy(self.state), move)
+            self.state = Game.simulate_play_move(self.game_config, self.state, move)
         else:
             self.state.hint_tokens -= 1
             self._update_hints(move, target_player=move.target_player)
