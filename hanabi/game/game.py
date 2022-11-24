@@ -121,8 +121,8 @@ class Game:
     @staticmethod
     def apply_play_move(game_config: GameConfig, state: State, move: Move) -> State:
         card_played = state.player_cards[state.current_player].pop(move.move_detail.card_index)
-        if state.played_cards[card_played.color.value] == int(card_played.number.value) + 1:
-            state.played_cards[card_played.color.value] += 1
+        if state.played_cards[card_played.color] == int(card_played.number.value) + 1:
+            state.played_cards[card_played.color] += 1
         else:
             state.discarded_cards.append(card_played)
             state.penalty_tokens += 1
