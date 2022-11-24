@@ -1,7 +1,7 @@
 from typing import List, Optional, Tuple
 
 from hanabi.agents.agent import Agent
-from hanabi.game.move import Move, MoveType
+from hanabi.game.move import Move, MoveType, HintCardColor, HintCardNumber
 from hanabi.game.state import State
 
 
@@ -28,12 +28,21 @@ class Human(Agent):
                     return move
         elif chosen_move_type == MoveType.HINT.value:
             chosen_player = int(input("Player: "))
-            hints_available = set(move.move_detail.value for move in candidate_moves if move.move_type == MoveType.HINT)
+            hints_available = set()
+            for move in candidate_moves:
+                if move.move_type == MoveType.HINT and move.target_player == chosen_player:
+                    if isinstance(move.move_detail.hint_move_detail, HintCardColor):
+                        hints_available.add(move.move_detail.hint_move_detail.card_color.value)
+                    if isinstance(move.move_detail.hint_move_detail, HintCardNumber):
+                        hints_available.add(move.move_detail.hint_move_detail.card_number.value)
             print(f"Available hints: {', '.join(sorted(hints_available))}")
             chosen_hint = input("Hint: ")
             for move in filtered_moves:
-                if chosen_player == move.target_player and chosen_hint == move.move_detail.value:
-                    return move
+                if chosen_player == move.target_player:
+                    if isinstance(move.move_detail.hint_move_detail, HintCardColor) and chosen_hint == move.move_detail.hint_move_detail.card_color.value:
+                        return move
+                    if isinstance(move.move_detail.hint_move_detail, HintCardNumber) and chosen_hint == move.move_detail.hint_move_detail.card_number.value:
+                        return move
 
         return None
 

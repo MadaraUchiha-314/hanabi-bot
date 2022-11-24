@@ -10,18 +10,22 @@ class MoveType(Enum):
     HINT = 'hint'
     PLAY = 'play'
 
+
 @dataclass
 class HintMoveType(Enum):
     Color = 'Color'
     Number = 'Number'
 
+
 @dataclass
 class HintCardColor:
     card_color: CardColor
 
+
 @dataclass
 class HintCardNumber:
     card_number: CardNumber
+
 
 @dataclass
 class HintCardMove:
@@ -29,21 +33,27 @@ class HintCardMove:
     hint_move_detail: Union[HintCardColor, HintCardNumber]
 
     def __str__(self):
-        return f'card color is {self.hint_move_detail.card_color}' if self.type == HintMoveType.Color else f'card number is {self.hint_move_detail.card_number}'
+        if self.hint_move_type.value == HintMoveType.Color:
+            return f'card color is {self.hint_move_detail.card_color}'
+        else:
+            return f'card number is {self.hint_move_detail.card_number}'
+
 
 @dataclass
 class DiscardCardMove:
     card_index: CardIndex
 
     def __str__(self):
-        return str(card_index)
+        return str(self.card_index)
+
 
 @dataclass
 class PlayCardMove:
     card_index: CardIndex
 
     def __str__(self):
-        return str(card_index)
+        return str(self.card_index)
+
 
 @dataclass
 class Move:
@@ -53,11 +63,12 @@ class Move:
 
     def __str__(self):
         if self.move_type == MoveType.HINT:
-            return f'hinted player {self.target_player} -- {self.move_detail.value}'
+            return f'hinted player {self.target_player} -- {self.move_detail}'
         elif self.move_type == MoveType.DISCARD:
             return f'discarded {self.move_detail}'
         elif self.move_type == MoveType.PLAY:
             return f'played {self.move_detail}'
+
 
 @dataclass
 class PlayedMove:

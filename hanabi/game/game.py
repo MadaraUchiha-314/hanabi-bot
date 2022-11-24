@@ -151,11 +151,11 @@ class Game:
         return state_for_player
     
     def get_next_moves_and_states(self) -> List[Tuple[Move, State]]:
-        return [(move, None) for move in self.get_next_moves()]
+        pass
 
     def _update_hints(self, move: Move, target_player: int):
-        if isinstance(move.move_detail, CardNumber):
-            hinted_number = move.move_detail
+        if isinstance(move.move_detail.hint_move_detail, HintCardNumber):
+            hinted_number = move.move_detail.hint_move_detail.card_number
             for card in self.state.player_cards[target_player]:
                 if card.number == hinted_number:  # If match, cross out every other number
                     for number in CardNumber:
@@ -163,8 +163,8 @@ class Game:
                     card.hints[card.number.value] = True
                 else:  # else cross out the number hinted
                     card.hints[hinted_number.value] = False
-        if isinstance(move.move_detail, CardColor):
-            hinted_color = move.move_detail
+        if isinstance(move.move_detail.hint_move_detail, HintCardColor):
+            hinted_color = move.move_detail.hint_move_detail.card_color
             for card in self.state.player_cards[target_player]:
                 if card.color == hinted_color:  # If match, cross out every other number
                     for color in CardNumber:
@@ -177,12 +177,12 @@ class Game:
         if move.move_type == MoveType.DISCARD:
             self.state.discarded_cards.append(
                 self.state.player_cards[self.state.current_player].pop(
-                    move.move_detail
+                    move.move_detail.card_index
                 )
             )
             self.state.player_cards[self.state.current_player].insert(0, self.state.deck.pop())
         elif move.move_type == MoveType.PLAY:
-            card_played = self.state.player_cards[self.state.current_player].pop(move.move_detail)
+            card_played = self.state.player_cards[self.state.current_player].pop(move.move_detail.card_index)
             if self.state.played_cards[card_played.color.value] == int(card_played.number.value) + 1:
                 self.state.played_cards[card_played.color.value] += 1
             else:
