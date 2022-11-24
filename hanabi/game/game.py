@@ -149,10 +149,10 @@ class Game:
             return Game.simulate_hint_move(game_config, state, move)
          
     def get_state_for_current_player(self) -> State:
-        state_for_player = copy.deepcopy(self.state)
-        state_for_player.player_cards[self.state.current_player] = []
-        state_for_player.deck = []
-        return state_for_player
+        state = copy.deepcopy(self.state)
+        state.player_cards[self.state.current_player] = [card.get(True) for card in self.state.player_cards[self.state.current_player]]
+        state.deck = []
+        return state
     
     def get_next_moves_and_states(self) -> List[Tuple[Move, State]]:
         pass

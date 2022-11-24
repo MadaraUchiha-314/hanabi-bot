@@ -1,5 +1,7 @@
 from enum import Enum
-from typing import Dict, Union
+from typing import Dict, Union, Optional
+
+from dataclasses import dataclass
 
 CardIndex = int
 
@@ -19,23 +21,34 @@ class CardColor(Enum):
     YELLOW = 'Yellow'
     WHITE = 'White'
 
-
+@dataclass
 class Card:
-    color: CardColor
-    number: CardNumber
+    color: Optional[CardColor]
+    number: Optional[CardNumber]
 
     # Hints: True indicate possible values
     hints: Dict[Union[CardColor, CardNumber], bool]
 
-    def __init__(self, color, number):
+    def __init__(self, color = None, number = None, hints = None):
         self.color = color
         self.number = number
-
-        self.hints = {}
-        for color in CardColor:
-            self.hints[color] = True
-        for number in CardNumber:
-            self.hints[number] = True
+        if hints != None:
+            self.hints = hints
+        else:
+            self.hints = {}
+            for color in CardColor:
+                self.hints[color] = True
+            for number in CardNumber:
+                self.hints[number] = True
+    
+    def get(self, isMaked = False):
+        if not isMaked:
+            return self
+        return Card(
+            color=None,
+            number=None,
+            hints=self.hints,
+        )
 
     def __str__(self):
         return f'{self.color.value[0]}{self.number.value}'
