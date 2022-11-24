@@ -42,7 +42,7 @@ def run_game():
     random.shuffle(initial_deck)
 
     game = Game(game_config, initial_deck)
-    players = [Human(0), DiscardingAgent(1), DiscardingAgent(2)]
+    players = [Human(game_config, 0), DiscardingAgent(game_config, 1), DiscardingAgent(game_config, 2)]
 
     played_moves_log = []
     for i in range(10):
