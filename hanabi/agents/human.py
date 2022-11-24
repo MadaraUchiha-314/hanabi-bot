@@ -19,12 +19,12 @@ class Human(Agent):
         if chosen_move_type == MoveType.DISCARD.value:
             chosen_index = int(input("Card index: "))
             for move in filtered_moves:
-                if chosen_index == move.move_detail:
+                if chosen_index == move.move_detail.card_index:
                     return move
         elif chosen_move_type == MoveType.PLAY.value:
             chosen_index = int(input("Card index: "))
             for move in filtered_moves:
-                if chosen_index == move.move_detail:
+                if chosen_index == move.move_detail.card_index:
                     return move
         elif chosen_move_type == MoveType.HINT.value:
             chosen_player = int(input("Player: "))
