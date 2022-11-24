@@ -1,4 +1,3 @@
-import copy
 import random
 from typing import List
 
@@ -41,7 +40,7 @@ def run_game():
 
         played_action = current_agent.action(
             state=game.get_state_for_current_player(),
-            candidate_moves_and_states=game.get_next_moves_and_states(),
+            candidate_moves=game.get_next_moves(),
         )
 
         played_moves_log.append(PlayedMove(player_num=current_player, move=played_action))

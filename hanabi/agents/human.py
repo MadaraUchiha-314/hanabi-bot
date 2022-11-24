@@ -37,10 +37,10 @@ class Human(Agent):
 
         return None
 
-    def action(self, state: State, candidate_moves_and_states: List[Tuple[Move, State]]) -> Move:
-        result = self.get_move_from_user([move for move, _ in candidate_moves_and_states])
+    def action(self, state: State, candidate_moves: List[Move]) -> Move:
+        result = self.get_move_from_user(candidate_moves)
         while result is None:
             print(f"Invalid input, please retry:")
-            result = self.get_move_from_user([move for move, _ in candidate_moves_and_states])
+            result = self.get_move_from_user(candidate_moves)
         return result
 
