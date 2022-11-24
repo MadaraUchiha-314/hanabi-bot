@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from typing import List, Tuple
 
 from hanabi.game.state import State
-from hanabi.game.move import Move, MoveType, HintCardMove, DiscardCardMove, PlayCardMove
+from hanabi.game.move import Move, MoveType, HintCardMove, DiscardCardMove, PlayCardMove, HintCardColor, HintCardNumber, HintMoveType
 from hanabi.game.card import CardNumber, CardColor, CardIndex
 
 
@@ -57,6 +57,7 @@ class Game:
                     move_type=MoveType.HINT,
                     target_player=target_player,
                     move_detail=HintCardMove(
+                        hint_move_type=HintMoveType.Color,
                         hint_move_detail=HintCardColor(
                             card_color=color
                         )
@@ -67,6 +68,7 @@ class Game:
                     move_type=MoveType.HINT,
                     target_player=target_player,
                     move_detail=HintCardMove(
+                        hint_move_type=HintMoveType.Number,
                         hint_move_detail=HintCardNumber(
                             card_number=deck
                         )
@@ -99,11 +101,12 @@ class Game:
         return moves
 
     def get_next_moves(self) -> List[Move]:
-        return self.get_hint_moves() + self.get_dicard_moves() + self.get_play_moves()
+        return self._get_hint_moves() + self._get_dicard_moves() + self._get_play_moves()
 
     @staticmethod
     def move_to_next_player(game_config: GameConfig, state: State) -> State:
-        return state.current_player = (state.current_player + 1) % game_config.num_players
+        state.current_player = (state.current_player + 1) % game_config.num_players
+        return state
 
     @staticmethod
     def apply_discard_move(game_config: GameConfig, state: State, move: Move) -> State:
@@ -118,12 +121,12 @@ class Game:
     @staticmethod
     def apply_play_move(game_config: GameConfig, state: State, move: Move) -> State:
         card_played = state.player_cards[state.current_player].pop(move.move_detail.card_index)
-            if state.played_cards[card_played.color.value] == int(card_played.number.value) + 1:
-                state.played_cards[card_played.color.value] += 1
-            else:
-                state.discarded_cards.append(card_played)
-                state.penalty_tokens += 1
-            state.player_cards[state.current_player].append(state.deck.pop())
+        if state.played_cards[card_played.color.value] == int(card_played.number.value) + 1:
+            state.played_cards[card_played.color.value] += 1
+        else:
+            state.discarded_cards.append(card_played)
+            state.penalty_tokens += 1
+        state.player_cards[state.current_player].append(state.deck.pop())
         return state
     
     @staticmethod

@@ -12,8 +12,8 @@ class MoveType(Enum):
 
 @dataclass
 class HintMoveType(Enum):
-    ColorHint = 'ColorHint'
-    NumberHint = 'NumberHint'
+    Color = 'Color'
+    Number = 'Number'
 
 @dataclass
 class HintCardColor:
@@ -25,11 +25,11 @@ class HintCardNumber:
 
 @dataclass
 class HintCardMove:
-    hint_move_type HintMoveType
-    hint_move_detail: Union=[HintCardColor, HintCardNumber]
+    hint_move_type: HintMoveType
+    hint_move_detail: Union[HintCardColor, HintCardNumber]
 
     def __str__(self):
-        return f'card color is {self.hint_move_detail.card_color}' if self.type == HintMoveType.ColorHint else f'card number is {self.hint_move_detail.card_number}'
+        return f'card color is {self.hint_move_detail.card_color}' if self.type == HintMoveType.Color else f'card number is {self.hint_move_detail.card_number}'
 
 @dataclass
 class DiscardCardMove:
