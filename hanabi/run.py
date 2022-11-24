@@ -4,6 +4,7 @@ from typing import List
 from hanabi.agents.agent import Agent
 from hanabi.agents.discarding_agent import DiscardingAgent
 from hanabi.agents.human import Human
+from hanabi.agents.infinite_hints_agent import InfiniteHintsAgent
 from hanabi.game.card import CardColor, CardNumber, Card
 from hanabi.game.game import Game
 from hanabi.game.move import PlayedMove
@@ -42,7 +43,11 @@ def run_game():
     random.shuffle(initial_deck)
 
     game = Game(game_config, initial_deck)
-    players = [Human(game_config, 0), DiscardingAgent(game_config, 1), DiscardingAgent(game_config, 2)]
+    players = [
+        Human(game.game_config, 0),
+        DiscardingAgent(game.game_config, 1),
+        DiscardingAgent(game.game_config, 2),
+    ]
 
     played_moves_log = []
     for i in range(10):

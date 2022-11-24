@@ -3,9 +3,10 @@ from hanabi.game.move import Move
 from hanabi.game.state import State
 from hanabi.agents.agent import Agent
 
-class Human(Agent):
-    def __init__(self, player_index):
-        super().__init__(player_index)
+
+class ButteAgent(Agent):
+    def __init__(self, game_config, player_index):
+        super().__init__(game_config, player_index)
     
     def action(self, state: State, candidate_moves: List[Move]) -> Move:
         # Priorities

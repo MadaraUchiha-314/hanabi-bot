@@ -1,13 +1,14 @@
 from typing import List, Optional
 
 from hanabi.agents.agent import Agent
+from hanabi.game.game import GameConfig
 from hanabi.game.move import Move, MoveType, HintCardColor, HintCardNumber
 from hanabi.game.state import State
 
 
 class Human(Agent):
-    def __init__(self, player_index):
-        super().__init__(player_index)
+    def __init__(self, game_config: GameConfig, player_index):
+        super().__init__(game_config, player_index)
 
     def get_move_from_user(self, candidate_moves) -> Optional[Move]:
         available_move_types = set(move.move_type.value for move in candidate_moves)

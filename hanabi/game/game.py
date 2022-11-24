@@ -132,12 +132,14 @@ class Game:
     def simulate_play_card(game_config: GameConfig, state: State, card: Card) -> State:
         new_state = copy.deepcopy(state)
 
-        if new_state.played_cards[card.color] == int(card.number.value) + 1:
+        if new_state.played_cards[card.color] == int(card.number.value) - 1:
             new_state.played_cards[card.color] += 1
         else:
             new_state.discarded_cards.append(card)
             new_state.penalty_tokens += 1
-        new_state.player_cards[new_state.current_player].append(new_state.deck.pop())
+
+        if len(new_state.deck) > 0:
+            new_state.player_cards[new_state.current_player].append(new_state.deck.pop())
         return new_state
     
     @staticmethod
@@ -165,25 +167,35 @@ class Game:
     def get_next_moves_and_states(self) -> List[Tuple[Move, State]]:
         pass
 
-    def _update_hints(self, move: Move, target_player: int):
+    @staticmethod
+    def simulate_update_hints(state: State, move: Move) -> State:
+        new_state = copy.deepcopy(state)
+        target_player = move.target_player
+
         if isinstance(move.move_detail.hint_move_detail, HintCardNumber):
             hinted_number = move.move_detail.hint_move_detail.card_number
-            for card in self.state.player_cards[target_player]:
+            for idx, card in enumerate(new_state.player_cards[target_player]):
+                new_hints = copy.deepcopy(card.hints)
                 if card.number == hinted_number:  # If match, cross out every other number
                     for number in CardNumber:
-                        card.hints[number] = False
-                    card.hints[card.number] = True
+                        new_hints[number] = False
+                    new_hints[card.number] = True
                 else:  # else cross out the number hinted
-                    card.hints[hinted_number] = False
+                    new_hints[hinted_number] = False
+                new_state.player_cards[target_player][idx].hints = new_hints
         if isinstance(move.move_detail.hint_move_detail, HintCardColor):
             hinted_color = move.move_detail.hint_move_detail.card_color
-            for card in self.state.player_cards[target_player]:
+            for idx, card in enumerate(new_state.player_cards[target_player]):
+                new_hints = copy.deepcopy(card.hints)
                 if card.color == hinted_color:  # If match, cross out every other color
                     for color in CardColor:
-                        card.hints[color] = False
-                    card.hints[card.color] = True
+                        new_hints[color] = False
+                    new_hints[card.color] = True
                 else:  # else cross out the color hinted
-                    card.hints[hinted_color] = False
+                    new_hints[hinted_color] = False
+                new_state.player_cards[target_player][idx].hints = new_hints
+
+        return new_state
 
     def make_move(self, move: Move):
         if move.move_type == MoveType.DISCARD:
@@ -192,6 +204,6 @@ class Game:
             self.state = Game.simulate_play_move(self.game_config, self.state, move)
         else:
             self.state.hint_tokens -= 1
-            self._update_hints(move, target_player=move.target_player)
+            self.state = Game.simulate_update_hints(self.state, move)
 
         self.state.current_player = (self.state.current_player + 1) % self.game_config.num_players
