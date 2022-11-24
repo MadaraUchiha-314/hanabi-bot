@@ -1,8 +1,5 @@
-from dataclasses import dataclass
 from enum import Enum
-
-# hax
-from typing import Dict
+from typing import Dict, Union
 
 CardIndex = int
 
@@ -28,7 +25,7 @@ class Card:
     number: CardNumber
 
     # Hints: True indicate possible values
-    hints: Dict[str, bool]
+    hints: Dict[Union[CardColor, CardNumber], bool]
 
     def __init__(self, color, number):
         self.color = color
@@ -36,14 +33,14 @@ class Card:
 
         self.hints = {}
         for color in CardColor:
-            self.hints[color.value] = True
+            self.hints[color] = True
         for number in CardNumber:
-            self.hints[number.value] = True
+            self.hints[number] = True
 
     def __str__(self):
         return f'{self.color.value[0]}{self.number.value}'
 
     def hints_str(self):
-        color_hints = [color.value[0] for color in CardColor if self.hints[color.value]]
-        number_hints = [number.value[0] for number in CardNumber if self.hints[number.value]]
+        color_hints = [color.value[0] for color in CardColor if self.hints[color]]
+        number_hints = [number.value[0] for number in CardNumber if self.hints[number]]
         return f"{''.join(color_hints)} {''.join(number_hints)}"

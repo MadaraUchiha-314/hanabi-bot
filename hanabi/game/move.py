@@ -33,7 +33,7 @@ class HintCardMove:
     hint_move_detail: Union[HintCardColor, HintCardNumber]
 
     def __str__(self):
-        if self.hint_move_type.value == HintMoveType.Color:
+        if isinstance(self.hint_move_detail, HintCardColor):
             return f'card color is {self.hint_move_detail.card_color}'
         else:
             return f'card number is {self.hint_move_detail.card_number}'

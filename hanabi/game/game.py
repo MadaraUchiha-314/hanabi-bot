@@ -159,19 +159,19 @@ class Game:
             for card in self.state.player_cards[target_player]:
                 if card.number == hinted_number:  # If match, cross out every other number
                     for number in CardNumber:
-                        card.hints[number.value] = False
-                    card.hints[card.number.value] = True
+                        card.hints[number] = False
+                    card.hints[card.number] = True
                 else:  # else cross out the number hinted
-                    card.hints[hinted_number.value] = False
+                    card.hints[hinted_number] = False
         if isinstance(move.move_detail.hint_move_detail, HintCardColor):
             hinted_color = move.move_detail.hint_move_detail.card_color
             for card in self.state.player_cards[target_player]:
-                if card.color == hinted_color:  # If match, cross out every other number
-                    for color in CardNumber:
-                        card.hints[color.value] = False
-                    card.hints[card.color.value] = True
-                else:  # else cross out the number hinted
-                    card.hints[hinted_color.value] = False
+                if card.color == hinted_color:  # If match, cross out every other color
+                    for color in CardColor:
+                        card.hints[color] = False
+                    card.hints[card.color] = True
+                else:  # else cross out the color hinted
+                    card.hints[hinted_color] = False
 
     def make_move(self, move: Move):
         if move.move_type == MoveType.DISCARD:
