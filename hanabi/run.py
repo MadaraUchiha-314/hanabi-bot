@@ -11,7 +11,8 @@ from hanabi.game.move import PlayedMove
 random.seed(42)
 
 
-def get_card_multiplicity(number: "CardNumber") -> int:
+def get_card_multiplicity(card: Card) -> int:
+    number = card.number
     if number == CardNumber.ONE:
         return 3
     elif number == CardNumber.FIVE:
@@ -24,17 +25,20 @@ def run_game():
     game_config = {
         "available_decks": [num for num in CardNumber],
         "colors": [color for color in CardColor],
+        "card_multiplicity": get_card_multiplicity,
         "num_players": 3,
         "cards_per_players": 5,
         "hint_tokens": 8,
         "max_penalty_tokes": 3,
     }
 
+    card_multiplicity_method = game_config["card_multiplicity"]
     initial_deck: List[Card] = []
     for color in CardColor:
         for number in CardNumber:
-            for multiplicity in range(get_card_multiplicity(number)):
-                initial_deck.append(Card(color=color, number=number))
+            card = Card(color=color, number=number)
+            for multiplicity in range(card_multiplicity_method(card)):
+                initial_deck.append(card)
     random.shuffle(initial_deck)
 
     game = Game(game_config, initial_deck)

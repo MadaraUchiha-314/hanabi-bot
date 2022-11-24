@@ -44,3 +44,6 @@ class Card:
         color_hints = [color.value[0] for color in CardColor if self.hints[color]]
         number_hints = [number.value[0] for number in CardNumber if self.hints[number]]
         return f"{''.join(color_hints)} {''.join(number_hints)}"
+
+    def __eq__(self, other):
+        return self.color == other.color and self.number == other.number

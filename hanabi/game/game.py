@@ -1,16 +1,17 @@
 import copy
 from dataclasses import dataclass
-from typing import List, Tuple
+from typing import List, Tuple, Callable
 
 from hanabi.game.state import State
 from hanabi.game.move import Move, MoveType, HintCardMove, DiscardCardMove, PlayCardMove, HintCardColor, HintCardNumber, HintMoveType
-from hanabi.game.card import CardNumber, CardColor, CardIndex
+from hanabi.game.card import CardNumber, CardColor, CardIndex, Card
 
 
 @dataclass
 class GameConfig:
     available_decks: List[CardNumber]
     colors: List[CardColor]
+    card_multiplicity: Callable[[Card], int]
     num_players: int
     cards_per_players: int
     hint_tokens: int
@@ -24,6 +25,7 @@ class Game:
         self.game_config = GameConfig(
             available_decks=config["available_decks"],
             colors=config["colors"],
+            card_multiplicity=config["card_multiplicity"],
             num_players=config["num_players"],
             cards_per_players=config["cards_per_players"],
             hint_tokens=config["hint_tokens"],
@@ -118,16 +120,22 @@ class Game:
         )
         new_state.player_cards[new_state.current_player].insert(0, new_state.deck.pop())
         return new_state
-    
+
     @staticmethod
     def simulate_play_move(game_config: GameConfig, state: State, move: Move) -> State:
         new_state = copy.deepcopy(state)
 
         card_played = new_state.player_cards[new_state.current_player].pop(move.move_detail.card_index)
-        if new_state.played_cards[card_played.color] == int(card_played.number.value) + 1:
-            new_state.played_cards[card_played.color] += 1
+        return Game.simulate_play_card(game_config, state, card_played)
+
+    @staticmethod
+    def simulate_play_card(game_config: GameConfig, state: State, card: Card) -> State:
+        new_state = copy.deepcopy(state)
+
+        if new_state.played_cards[card.color] == int(card.number.value) + 1:
+            new_state.played_cards[card.color] += 1
         else:
-            new_state.discarded_cards.append(card_played)
+            new_state.discarded_cards.append(card)
             new_state.penalty_tokens += 1
         new_state.player_cards[new_state.current_player].append(new_state.deck.pop())
         return new_state
