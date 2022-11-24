@@ -42,7 +42,7 @@ class Game:
             player_cards=player_cards,
             current_player=0,
             hint_tokens=self.game_config.hint_tokens,
-            penalty_tokens=self.game_config.max_penalty_tokes,
+            penalty_tokens=0,
         )
 
     def _get_hint_moves(self) -> List[Move]:
@@ -131,12 +131,12 @@ class Game:
     
     @staticmethod
     def apply_hint_move(game_config: GameConfig, state: State, move: Move) -> State:
-        state.hints_available -= 1
+        state.hint_tokens -= 1
         return state
     
     @staticmethod
     def apply_move(game_config: GameConfig, state: State, move: Move) -> State:
-        state = copy.deepcopy(self.state)
+        state = copy.deepcopy(state)
         if move.move_type == MoveType.DISCARD:
             return Game.apply_discard_move(game_config, state, move)
         elif move.move_type == MoveType.PLAY:
@@ -175,20 +175,9 @@ class Game:
 
     def make_move(self, move: Move):
         if move.move_type == MoveType.DISCARD:
-            self.state.discarded_cards.append(
-                self.state.player_cards[self.state.current_player].pop(
-                    move.move_detail.card_index
-                )
-            )
-            self.state.player_cards[self.state.current_player].insert(0, self.state.deck.pop())
+            self.state = Game.apply_discard_move(self.game_config, copy.deepcopy(self.state), move)
         elif move.move_type == MoveType.PLAY:
-            card_played = self.state.player_cards[self.state.current_player].pop(move.move_detail.card_index)
-            if self.state.played_cards[card_played.color.value] == int(card_played.number.value) + 1:
-                self.state.played_cards[card_played.color.value] += 1
-            else:
-                self.state.discarded_cards.append(card_played)
-                self.state.penalty_tokens += 1
-            self.state.player_cards[self.state.current_player].append(self.state.deck.pop())
+            self.state = Game.apply_play_move(self.game_config, copy.deepcopy(self.state), move)
         else:
             self.state.hint_tokens -= 1
             self._update_hints(move, target_player=move.target_player)

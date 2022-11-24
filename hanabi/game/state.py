@@ -1,15 +1,15 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Dict
 
 from tabulate import tabulate, SEPARATING_LINE
 
-from hanabi.game.card import Card
+from hanabi.game.card import Card, CardColor
 
 
 @dataclass
 class State:
     deck: List[Card]
-    played_cards: List[int]
+    played_cards: Dict[CardColor, int]
     discarded_cards: List[Card]
     player_cards: List[List[Card]]
 
