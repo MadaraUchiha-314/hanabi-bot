@@ -175,20 +175,9 @@ class Game:
 
     def make_move(self, move: Move):
         if move.move_type == MoveType.DISCARD:
-            self.state.discarded_cards.append(
-                self.state.player_cards[self.state.current_player].pop(
-                    move.move_detail
-                )
-            )
-            self.state.player_cards[self.state.current_player].insert(0, self.state.deck.pop())
+            self.state = Game.apply_discard_move(self.game_config, self.state, self.move)
         elif move.move_type == MoveType.PLAY:
-            card_played = self.state.player_cards[self.state.current_player].pop(move.move_detail)
-            if self.state.played_cards[card_played.color.value] == int(card_played.number.value) + 1:
-                self.state.played_cards[card_played.color.value] += 1
-            else:
-                self.state.discarded_cards.append(card_played)
-                self.state.penalty_tokens += 1
-            self.state.player_cards[self.state.current_player].append(self.state.deck.pop())
+            self.state = Game.apply_play_move(self.game_config, self.state, self.move)
         else:
             self.state.hint_tokens -= 1
             self._update_hints(move, target_player=move.target_player)
