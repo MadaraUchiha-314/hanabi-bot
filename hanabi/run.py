@@ -51,7 +51,7 @@ def run_game():
     ]
 
     played_moves_log = []
-    for i in range(10):
+    for i in range(100):
         print(game.state)
 
         current_player = game.state.current_player
