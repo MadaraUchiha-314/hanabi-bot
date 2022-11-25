@@ -126,7 +126,7 @@ class Game:
         new_state = copy.deepcopy(state)
 
         card_played = new_state.player_cards[new_state.current_player].pop(move.move_detail.card_index)
-        return Game.simulate_play_card(game_config, state, card_played)
+        return Game.simulate_play_card(game_config, new_state, card_played)
 
     @staticmethod
     def simulate_play_card(game_config: GameConfig, state: State, card: Card) -> State:
