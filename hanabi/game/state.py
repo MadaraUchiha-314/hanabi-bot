@@ -18,6 +18,8 @@ class State:
     hint_tokens: int
     penalty_tokens: int
 
+    is_game_over: bool
+
     def __str__(self):
         result = ''
         result += "Played cards: \n"

@@ -12,9 +12,26 @@ class GreedyAgent(Agent):
         super().__init__(game_config, player_index)
 
 
-    def evalutate_next_state_score(self, state: State, next_state: State, move):
-        return 0
-    
+    def evalutate_next_state_score(self, state: State, next_state: State, move: Move):
+        score = 0
+        total_played_cards_before = sum([state.played_cards[color] for color in self.game_config.colors])
+        total_played_cards_after = sum([next_state.played_cards[color] for color in self.game_config.colors])
+
+        if total_played_cards_after > total_played_cards_before:
+            score += 10
+        
+        if next_state.penalty_tokens > state.penalty_tokens:
+            score -= 100
+
+        if move.move_type == MoveType.HINT:
+            score += 2
+
+        if next_state.penalty_tokens >= self.game_config.max_penalty_tokes:
+            score -= 10 ** 5
+        
+        return score
+
+            
     def action(self, state: State, candidate_moves: List[Move]) -> Move:
         current_player = state.current_player
         current_player_cards = state.player_cards[current_player]
@@ -22,7 +39,7 @@ class GreedyAgent(Agent):
         for idx, card in enumerate(current_player_cards):
             possible_cards_for_current_player += [ (idx,possible_card) for possible_card in resolve_hints_to_all_possible_cards(self.game_config, card)]
 
-        possible_next_states = []
+        possible_next_states: List[State] = []
         for idx, card in possible_cards_for_current_player:
             state.player_cards[current_player][idx] = card
             move = Move(
@@ -78,7 +95,7 @@ class GreedyAgent(Agent):
              self.evalutate_next_state_score(
                 state, next_state, move
             ) for move, next_state in possible_next_states
-        ], [move for move, _ in possible_next_states]))[0][1]
+        ], [move for move, _ in possible_next_states]))[-1][1]
                 
 
 
