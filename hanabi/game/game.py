@@ -45,6 +45,7 @@ class Game:
             current_player=0,
             hint_tokens=self.game_config.hint_tokens,
             penalty_tokens=0,
+            is_game_over=False
         )
 
     def _get_hint_moves(self) -> List[Move]:
@@ -141,6 +142,8 @@ class Game:
 
         if len(new_state.deck) > 0:
             new_state.player_cards[new_state.current_player].append(new_state.deck.pop())
+        if (new_state.penalty_tokens >= game_config.max_penalty_tokes):
+            new_state.is_game_over = True
         return new_state
     
     @staticmethod
@@ -195,6 +198,8 @@ class Game:
         return new_state
 
     def make_move(self, move: Move):
+        if self.state.is_game_over:
+            raise RuntimeError("Game over buddy!")
         if move.move_type == MoveType.DISCARD:
             self.state = Game.simulate_discard_move(self.game_config, self.state, move)
         elif move.move_type == MoveType.PLAY:

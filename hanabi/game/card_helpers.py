@@ -36,7 +36,7 @@ def is_card_playable_without_penalty(game_config: GameConfig, state: State, card
     if card.color is None or card.number is None:
         return False
 
-    new_state = Game.simulate_play_card(game_config=None, state=state, card=card)
+    new_state = Game.simulate_play_card(game_config=game_config, state=state, card=card)
     if new_state.penalty_tokens > state.penalty_tokens:
         return False
     else:
