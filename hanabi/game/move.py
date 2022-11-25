@@ -11,23 +11,23 @@ class MoveType(Enum):
     PLAY = 'play'
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class HintMoveType(Enum):
     Color = 'Color'
     Number = 'Number'
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class HintCardColor:
     card_color: CardColor
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class HintCardNumber:
     card_number: CardNumber
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class HintCardMove:
     hint_move_type: HintMoveType
     hint_move_detail: Union[HintCardColor, HintCardNumber]
@@ -39,7 +39,7 @@ class HintCardMove:
             return f'card number is {self.hint_move_detail.card_number}'
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class DiscardCardMove:
     card_index: CardIndex
 
@@ -47,7 +47,7 @@ class DiscardCardMove:
         return str(self.card_index)
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class PlayCardMove:
     card_index: CardIndex
 
@@ -55,7 +55,7 @@ class PlayCardMove:
         return str(self.card_index)
 
 
-@dataclass
+@dataclass(unsafe_hash=True)
 class Move:
     move_type: MoveType
     move_detail: Union[HintCardMove, DiscardCardMove, PlayCardMove]

@@ -1,4 +1,6 @@
-from typing import List, Tuple
+import copy
+
+from typing import List, Tuple, Dict
 from hanabi.game.move import Move, PlayCardMove, MoveType, HintCardMove, HintCardNumber, HintCardColor, HintMoveType, DiscardCardMove
 from hanabi.game.state import State
 from hanabi.agents.agent import Agent
@@ -51,69 +53,23 @@ class GreedyAgent(Agent):
         return 0
 
     def action(self, state: State, candidate_moves: List[Move]) -> Move:
-        current_player = state.current_player
-        current_player_cards = state.player_cards[current_player]
-        possible_cards_for_current_player = []
-        for idx, card in enumerate(current_player_cards):
-            possible_cards_for_current_player += [ (idx,possible_card) for possible_card in resolve_hints_to_all_possible_cards(self.game_config, card)]
+        score: Dict[Move: int] = {}
+        for move in candidate_moves:
+            score[move] = 0
+            if move.move_type == MoveType.PLAY or move.move_type == MoveType.DISCARD:
+                possible_cards = state.player_cards[state.current_player][move.move_detail.card_index].get_possible_cards_from_hints()
+                for possible_card in possible_cards:
+                    current_state = copy.deepcopy(state)
+                    current_state.player_cards[state.current_player][move.move_detail.card_index] = possible_card
+                    next_state = Game.simulate_move(self.game_config, current_state, move)
+                    score_for_move = self.evaluate_next_state_score(current_state, next_state, move)
+                    score[move] += float(score_for_move) / float(len([possible_cards]))
+            else:
+                next_state = Game.simulate_move(self.game_config, state, move)
+                score_for_move = self.evaluate_next_state_score(state, next_state, move)
+                score[move] += float(score_for_move)
+        return sorted(
+            [(b, a) for a, b  in score.items()]
+        , reverse=True)[0][1]
 
-        possible_next_states: List[Tuple[Move, State]] = []
-        for idx, card in possible_cards_for_current_player:
-            state.player_cards[current_player][idx] = card
-            move = Move(
-                move_detail=PlayCardMove(
-                    card_index=idx,
-                ),
-                move_type=MoveType.PLAY,
-                target_player=current_player
-            )
-            possible_next_states.append((move, Game.simulate_move(self.game_config, state, move)))
-        for player in range(self.game_config.num_players):
-            if player == state.current_player:
-                continue
-            for color in self.game_config.colors:
-                move = Move(
-                    move_detail=HintCardMove(
-                        hint_move_type=HintMoveType.Color,
-                        hint_move_detail=HintCardColor(
-                            card_color=color,
-                        )
-                    ),
-                    move_type=MoveType.HINT,
-                    target_player=player
-                )
-                possible_next_states.append((move, Game.simulate_move(self.game_config, state, move)))
-            for number in self.game_config.available_decks:
-                move = Move(
-                    move_detail=HintCardMove(
-                        hint_move_type=HintMoveType.Number,
-                        hint_move_detail=HintCardNumber(
-                            card_number=number,
-                        )
-                    ),
-                    move_type=MoveType.HINT,
-                    target_player=player
-                )
-                possible_next_states.append((move, Game.simulate_move(self.game_config, state, move)))
-            
-            for idx, _ in enumerate(current_player_cards):
-                move = Move(
-                            move_detail=DiscardCardMove(
-                                card_index=idx,
-                            ),
-                            move_type=MoveType.DISCARD,
-                            target_player=current_player
-                        )
-                possible_next_states.append((move,
-                    Game.simulate_move(
-                        self.game_config, state, move 
-                    )
-                ))
-        result_moves = sorted(
-            zip(
-                [self.evaluate_next_state_score(state, next_state, move) for move, next_state in possible_next_states],
-                [move for move, _ in possible_next_states]
-            ),
-            reverse=True
-        )
-        return result_moves[0][1]
+                

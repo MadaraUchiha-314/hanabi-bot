@@ -2,6 +2,9 @@ from enum import Enum
 from typing import Dict, Union, Optional
 
 from dataclasses import dataclass
+from itertools import product
+
+import copy
 
 CardIndex = int
 
@@ -49,6 +52,15 @@ class Card:
             number=None,
             hints=self.hints,
         )
+    
+    def get_possible_cards_from_hints(self):
+        return [Card(color=color, number=number, hints=copy.deepcopy(self.hints))
+            for color, number in list(
+            product(
+                [color for color in CardColor if self.hints[color]],
+                [number for number in CardNumber if self.hints[number]]
+            )
+        )]
 
     def __str__(self):
         return f'{self.color.value[0]}{self.number.value}'
