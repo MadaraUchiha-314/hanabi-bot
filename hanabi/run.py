@@ -30,7 +30,7 @@ def run_game():
         "card_multiplicity": get_card_multiplicity,
         "num_players": 3,
         "cards_per_players": 5,
-        "hint_tokens": 8,
+        "hint_tokens": 800,
         "max_penalty_tokes": 3,
     }
 
@@ -45,9 +45,9 @@ def run_game():
 
     game = Game(game_config, initial_deck)
     players = [
-        Human(game.game_config, 0),
-        DiscardingAgent(game.game_config, 1),
-        DiscardingAgent(game.game_config, 2),
+        InfiniteHintsAgent(game.game_config, 0),
+        InfiniteHintsAgent(game.game_config, 1),
+        InfiniteHintsAgent(game.game_config, 2),
     ]
 
     played_moves_log = []

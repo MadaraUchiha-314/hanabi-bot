@@ -10,7 +10,7 @@ def resolve_hints_to_card(game_config: GameConfig, card: Card) -> Optional[Card]
     possible_colors = [color for color in game_config.colors if card.hints[color] is True]
     possible_numbers = [number for number in game_config.available_decks if card.hints[number] is True]
 
-    if len(possible_colors) != 1 and len(possible_numbers) != 1:
+    if len(possible_colors) != 1 or len(possible_numbers) != 1:
         return None
     return Card(color=possible_colors[0], number=possible_numbers[0])
 

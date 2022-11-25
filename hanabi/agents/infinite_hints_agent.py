@@ -20,9 +20,12 @@ class InfiniteHintsAgent(Agent):
 
             target_player_cards = state.player_cards[move.target_player]
             for idx, card in enumerate(target_player_cards):
-                if is_card_playable_without_penalty(self.game_config, state, card) \
-                        and is_direct_hint(hint_card_move=move.move_detail, card=card) \
-                        and is_hint_adding_information(state=state, move=move, target_card_idx=idx):
+                if is_direct_hint(hint_card_move=move.move_detail, card=card) \
+                        and is_hint_adding_information(state=state, move=move, target_card_idx=idx) \
+                        and (
+                        is_card_only_unplayed_copy(game_config=self.game_config, state=state, card=card) or
+                        is_card_playable_without_penalty(self.game_config, state, card)
+                ):
                     playable_hints.append(move)
 
         if len(playable_hints) == 0:
@@ -36,7 +39,8 @@ class InfiniteHintsAgent(Agent):
                 continue
 
             card = state.player_cards[self.player_index][move.move_detail.card_index]
-            if is_card_playable_without_penalty(game_config=self.game_config, state=state, card=card, resolve_hints=True):
+            if is_card_playable_without_penalty(game_config=self.game_config, state=state, card=card,
+                                                resolve_hints=True):
                 playable_card_moves.append(move)
 
         if len(playable_card_moves) == 0:
@@ -50,7 +54,7 @@ class InfiniteHintsAgent(Agent):
                 continue
 
             card = state.player_cards[self.player_index][move.move_detail.card_index]
-            if is_card_only_unplayed_copy(game_config=self.game_config, state=state, card=card, resolve_hints=True):
+            if not is_card_only_unplayed_copy(game_config=self.game_config, state=state, card=card, resolve_hints=True):
                 discardable_moves.append(move)
 
         if len(discardable_moves) == 0:

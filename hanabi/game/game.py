@@ -118,7 +118,8 @@ class Game:
                 move.move_detail.card_index
             )
         )
-        new_state.player_cards[new_state.current_player].insert(0, new_state.deck.pop())
+        if len(new_state.deck) > 0:
+            new_state.player_cards[new_state.current_player].insert(0, new_state.deck.pop())
         return new_state
 
     @staticmethod
