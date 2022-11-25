@@ -6,6 +6,7 @@ from hanabi.agents.agent import Agent
 from hanabi.agents.discarding_agent import DiscardingAgent
 from hanabi.agents.human import Human
 from hanabi.agents.infinite_hints_agent import InfiniteHintsAgent
+from hanabi.agents.GreedyAgent import GreedyAgent
 from hanabi.game.card import CardColor, CardNumber, Card
 from hanabi.game.game import Game
 from hanabi.game.move import PlayedMove
@@ -45,9 +46,9 @@ def run_game():
 
     game = Game(game_config, initial_deck)
     players = [
-        InfiniteHintsAgent(game.game_config, 0),
-        InfiniteHintsAgent(game.game_config, 1),
-        InfiniteHintsAgent(game.game_config, 2),
+        GreedyAgent(game.game_config, 0),
+        GreedyAgent(game.game_config, 1),
+        GreedyAgent(game.game_config, 2),
     ]
 
     played_moves_log = []
@@ -58,7 +59,7 @@ def run_game():
         current_agent: Agent = players[current_player]
 
         played_action = current_agent.action(
-            state=game.get_state_for_current_player(),
+            state=copy.deepcopy(game.get_state_for_current_player()),
             candidate_moves=game.get_next_moves(),
         )
 
