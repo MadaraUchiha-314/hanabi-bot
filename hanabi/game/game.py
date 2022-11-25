@@ -175,25 +175,21 @@ class Game:
         if isinstance(move.move_detail.hint_move_detail, HintCardNumber):
             hinted_number = move.move_detail.hint_move_detail.card_number
             for idx, card in enumerate(new_state.player_cards[target_player]):
-                new_hints = copy.deepcopy(card.hints)
                 if card.number == hinted_number:  # If match, cross out every other number
                     for number in CardNumber:
-                        new_hints[number] = False
-                    new_hints[card.number] = True
+                        card.hints[number] = False
+                    card.hints[card.number] = True
                 else:  # else cross out the number hinted
-                    new_hints[hinted_number] = False
-                new_state.player_cards[target_player][idx].hints = new_hints
+                    card.hints[hinted_number] = False
         if isinstance(move.move_detail.hint_move_detail, HintCardColor):
             hinted_color = move.move_detail.hint_move_detail.card_color
             for idx, card in enumerate(new_state.player_cards[target_player]):
-                new_hints = copy.deepcopy(card.hints)
                 if card.color == hinted_color:  # If match, cross out every other color
                     for color in CardColor:
-                        new_hints[color] = False
-                    new_hints[card.color] = True
+                        card.hints[color] = False
+                    card.hints[card.color] = True
                 else:  # else cross out the color hinted
-                    new_hints[hinted_color] = False
-                new_state.player_cards[target_player][idx].hints = new_hints
+                    card.hints[hinted_color] = False
 
         return new_state
 

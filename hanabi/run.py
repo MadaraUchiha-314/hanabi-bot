@@ -1,3 +1,4 @@
+import copy
 import random
 from typing import List
 
@@ -39,7 +40,7 @@ def run_game():
         for number in CardNumber:
             card = Card(color=color, number=number)
             for multiplicity in range(card_multiplicity_method(card)):
-                initial_deck.append(card)
+                initial_deck.append(copy.deepcopy(card))
     random.shuffle(initial_deck)
 
     game = Game(game_config, initial_deck)
