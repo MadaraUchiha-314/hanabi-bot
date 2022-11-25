@@ -1,4 +1,5 @@
-from typing import Optional
+import copy
+from typing import Optional, List
 from itertools import product
 
 from hanabi.game.card import Card, CardNumber
@@ -6,16 +7,25 @@ from hanabi.game.game import Game, GameConfig
 from hanabi.game.move import HintCardMove, HintCardColor, HintCardNumber, Move
 from hanabi.game.state import State
 
-def resolve_hints_to_all_possible_cards(game_config: GameConfig, card: Card) -> Optional[Card]:
+
+def resolve_hints_to_all_possible_cards(game_config: GameConfig, card: Card) -> List[Card]:
     possible_colors = [color for color in game_config.colors if card.hints[color] is True]
     possible_numbers = [number for number in game_config.available_decks if card.hints[number] is True]
-    return [Card(color=color, number=number) for (color, number) in list(product(possible_colors, possible_numbers))]
+    result = []
+    for (color, number) in list(product(possible_colors, possible_numbers)):
+        card_copy = copy.deepcopy(card)
+        card_copy.color = color
+        card_copy.number = number
+        result.append(card_copy)
+    return result
+
 
 def resolve_hints_to_card(game_config: GameConfig, card: Card) -> Optional[Card]:
     possible_cards = resolve_hints_to_all_possible_cards(game_config, card)
     if len(possible_cards) == 1:
         return possible_cards[0]
     return None
+
 
 def is_card_playable_without_penalty(game_config: GameConfig, state: State, card: Card, resolve_hints=False):
     if resolve_hints:

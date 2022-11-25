@@ -68,8 +68,9 @@ class Move:
             return f'discarded {self.move_detail}'
         elif self.move_type == MoveType.PLAY:
             return f'played {self.move_detail}'
+
     def __lt__(self, other):
-        return self
+        return False
 
 
 @dataclass
